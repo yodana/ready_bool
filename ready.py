@@ -1,3 +1,25 @@
+def clause_unitaire(variable):
+    r = 0
+    cu = ""
+    for s in variable:
+            if len(s) == 1:
+                cu = s
+    #clause unitaire
+    change = 0
+    if cu != "":
+        for i, s in enumerate(variable):
+            for k, l in enumerate(s):
+                if l["letter"] == cu[0]["letter"]:
+                    change = 1
+                    if l["negation"] == cu[0]["negation"]:
+                        del(variable[i])
+                    else:
+                        del(variable[i][k])
+                        if len(variable[i]) == 0:
+                            del variable[i]
+    print("variable",variable)
+    return variable, change
+
 def sat(formula):
     f = conjunctive_normal_form(formula)
     print("conjunctive normal form =>", f)
@@ -19,30 +41,26 @@ def sat(formula):
                     variable.pop()
             print(variable)
     #fonction clause unitaire
-    cu = ""
-    for s in variable:
-        if len(s) == 1:
-            cu = s
     change = 1
-    print("clause unitaire",cu)
     '''while (change == 1):
-        change = 0
-        for i, s in enumerate(variable):
-            for k, l in enumerate(s):
-                if l["letter"] == cu[0]["letter"]:
-                    change = 1
-                    if l["negation"] == cu[0]["negation"]:
-                        del(variable[i])
-                    else:
-                        del(variable[i][k])
-                        if len(variable[i]) == 0:
-                            del variable[i]'''
+        variable, change = clause_unitaire(variable)'''
     #fonction litteral pur
     l_pure = []
+    print("variable =>", variable)
+    change = 1
     for s in variable:
-        for i in variable:
-            #if l_pure
-            l_pure.append(i[0])
+        for i in s:
+            if l_pure != []:
+                for k, l in enumerate(l_pure):
+                    if l["letter"] == i["letter"]:
+                        if l["negation"] != i["negation"]:
+                            del l_pure[k]
+                        change = 0
+            if change == 1:
+                l_pure.append(i)
+            change = 1
+    #fonction heuristic MOMS
+    
     print("l_pure =>", l_pure)
 
 def distributivity(bloc, variable):
@@ -293,5 +311,5 @@ if __name__ == '__main__':
     #print(sat("A!B|C&"))
     #print(sat("AB&!C!|"))
     #print(sat("AB|C&"))
-    print(sat("AA!&BA!|&"))
+    print(sat("AA&B!C!|&"))
     #print(sat("AB|D|"))
