@@ -17,7 +17,8 @@ def litteral_pur(variable):
     for i, s in enumerate(variable):
         for v in s:
             if v in l_pure:
-                del variable[i]
+                if i >= 0:
+                    del variable[i]
                 i -= 1
     return variable, change
 
@@ -43,7 +44,7 @@ def dpll(variable):
      #fonction clause unitaire
     print("je passe avec =>", variable)
     change = 1
-    '''while (change == 1):
+    while (change == 1):
         variable, change = clause_unitaire(variable)
     #fonction litteral pur
     change = 1
@@ -54,7 +55,7 @@ def dpll(variable):
     for s in variable:
         if s == []:
             return False
-    print(variable)'''
+    print(variable)
     #fonction heuristic MOMS
     new = []
     minimum = len(variable[0])
@@ -109,9 +110,7 @@ def dpll(variable):
         v2.append(s)
     v1.append([{"letter":new[0], "negation":0}])
     v2.append([{"letter":new[0], "negation":1}])
-    print(v1)
-    print(v2)
-    #return dpll(v1) or dpll(v2)
+    return dpll(v1) or dpll(v2)
 
 def sat(formula):
     f = conjunctive_normal_form(formula)
@@ -133,7 +132,7 @@ def sat(formula):
                         variable[-2].append(v)
                     variable.pop()
             print(variable)
-    dpll(variable)
+    return dpll(variable)
     #print(clause)
     
 
@@ -365,7 +364,13 @@ if __name__ == '__main__':
     print(print_truth_table("AB|C&D|"))
     print("\n")
     print(print_truth_table("AA!&"))
-    #print(print_truth_table("AA!&B|B!&"))
+    print(print_truth_table("A!B|C&"))
+    print(print_truth_table("AB&!C!|") + "\n")
+    print(print_truth_table("AB|C&") + "\n")
+    print(print_truth_table("AA!&B|B!&"))
+    print(print_truth_table("AB|D|") + "\n")
+    print(print_truth_table("A!A|AA|&A!A!|AA!|&&"))
+    print(print_truth_table("AA^"))
     #ex05
     '''print(negation_normal_form("ABC&&!D!&!E|"))
     print(negation_normal_form("AB|C&!"))
@@ -386,6 +391,9 @@ if __name__ == '__main__':
     #print(sat("A!B|C&"))
     #print(sat("AB&!C!|"))
     #print(sat("AB|C&"))
-    print(sat("AA!&B|B!&"))
-
+    #print(sat("AA!&B|B!&"))
     #print(sat("AB|D|"))
+    #print(sat("AB|"))
+    #print(sat("AB&"))
+    #print(sat("AA!&"))
+    print(sat("AA^"))
