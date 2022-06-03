@@ -70,6 +70,23 @@ def sat(formula):
                 new = []
                 new.append(s)
     print(new)
+    letter = []
+    for s in new:
+        for k in s:
+            letter.append(k["letter"])
+    print(letter)
+    minimum = 0
+    new = []
+    for l in letter:
+        if letter.count(l) >= minimum:
+            if letter.count(l) == minimum or l in new != True:
+                print(l in new)
+                new.append(l)
+            else:
+                minimum = letter.count(l)
+                new = []
+                new.append(l)
+    print(new)
     #print(clause)
     
 
