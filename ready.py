@@ -60,8 +60,18 @@ def sat(formula):
                 l_pure.append(i)
             change = 1
     #fonction heuristic MOMS
+    new = []
+    minimum = len(variable[0])
+    for s in variable:
+        if len(s) <= minimum:
+            if len(s) == minimum:
+                new.append(s)
+            else:
+                new = []
+                new.append(s)
+    print(new)
+    #print(clause)
     
-    print("l_pure =>", l_pure)
 
 def distributivity(bloc, variable):
     bloc = bloc[:-1]
@@ -311,5 +321,5 @@ if __name__ == '__main__':
     #print(sat("A!B|C&"))
     #print(sat("AB&!C!|"))
     #print(sat("AB|C&"))
-    print(sat("AA&B!C!|&"))
+    print(sat("A!A&B!&"))
     #print(sat("AB|D|"))
