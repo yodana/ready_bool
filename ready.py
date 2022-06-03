@@ -1,10 +1,8 @@
 def clause_unitaire(variable):
-    r = 0
     cu = ""
     for s in variable:
             if len(s) == 1:
                 cu = s
-    #clause unitaire
     change = 0
     if cu != "":
         for i, s in enumerate(variable):
@@ -17,7 +15,6 @@ def clause_unitaire(variable):
                         del(variable[i][k])
                         if len(variable[i]) == 0:
                             del variable[i]
-    print("variable",variable)
     return variable, change
 
 def sat(formula):
@@ -86,9 +83,13 @@ def sat(formula):
                 new = []
                 new.append(l)
     print(new)
+    l = []
     if len(new) > 1:
         for s in variable:
-            print(s)
+            for m in s:
+                l.append(m["letter"])
+    print(l)
+    
     #print(clause)
     
 
