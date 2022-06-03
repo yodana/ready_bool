@@ -1,3 +1,26 @@
+def litteral_pur(variable):
+    l_pure = []
+    print("variable =>", variable)
+    change = 0
+    for s in variable:
+        for i in s:
+            if l_pure != []:
+                for k, l in enumerate(l_pure):
+                    if l["letter"] == i["letter"]:
+                        if l["negation"] != i["negation"]:
+                            del l_pure[k]
+                        change = 1
+            if change == 0:
+                l_pure.append(i)
+    if len(l_pure) == 0:
+        change = 0
+    for i, s in enumerate(variable):
+        for v in s:
+            if v in l_pure:
+                del variable[i]
+                i -= 1
+    return variable, change
+
 def clause_unitaire(variable):
     cu = ""
     for s in variable:
@@ -13,9 +36,82 @@ def clause_unitaire(variable):
                         del(variable[i])
                     else:
                         del(variable[i][k])
-                        if len(variable[i]) == 0:
-                            del variable[i]
+    print("variable cu =>", variable)
     return variable, change
+
+def dpll(variable):
+     #fonction clause unitaire
+    print("je passe avec =>", variable)
+    change = 1
+    '''while (change == 1):
+        variable, change = clause_unitaire(variable)
+    #fonction litteral pur
+    change = 1
+    while (change == 1):
+        variable, change = litteral_pur(variable)
+    if variable == []:
+        return True
+    for s in variable:
+        if s == []:
+            return False
+    print(variable)'''
+    #fonction heuristic MOMS
+    new = []
+    minimum = len(variable[0])
+    #prendre les clauses les + petites
+    for s in variable:
+        if len(s) <= minimum:
+            if len(s) == minimum:
+                new.append(s)
+            else:
+                new = []
+                new.append(s)
+    print("claues les + petites", new)
+    letter = []
+    #prendre la lettre la plus presentes dans les clauses
+    for s in new:
+        for k in s:
+            letter.append(k["letter"])
+    print(letter)
+    minimum = 0
+    new = []
+    for l in letter:
+        if letter.count(l) >= minimum:
+            if letter.count(l) == minimum and l not in new:
+                new.append(l)
+            else:
+                minimum = letter.count(l)
+                new = []
+                new.append(l)
+    print(new)
+    l = []
+    #si deux variables sont a egalite choisir la vairable la + presente dans toute la formule
+    if len(new) > 1:
+        for s in variable:
+            for m in s:
+                l.append(m["letter"])
+        print(l)
+        minimum = 0
+        new = []
+        for s in l:
+            if l.count(s) >= minimum:
+                if l.count(s) == minimum and l not in new:
+                    new.append(s)
+                else:
+                    minimum = letter.count(s)
+                    new = []
+                    new.append(s)
+    print(new)
+    v1 = []
+    v2 = []
+    for s in variable:
+        v1.append(s)
+        v2.append(s)
+    v1.append([{"letter":new[0], "negation":0}])
+    v2.append([{"letter":new[0], "negation":1}])
+    print(v1)
+    print(v2)
+    #return dpll(v1) or dpll(v2)
 
 def sat(formula):
     f = conjunctive_normal_form(formula)
@@ -37,59 +133,7 @@ def sat(formula):
                         variable[-2].append(v)
                     variable.pop()
             print(variable)
-    #fonction clause unitaire
-    change = 1
-    '''while (change == 1):
-        variable, change = clause_unitaire(variable)'''
-    #fonction litteral pur
-    l_pure = []
-    print("variable =>", variable)
-    change = 1
-    for s in variable:
-        for i in s:
-            if l_pure != []:
-                for k, l in enumerate(l_pure):
-                    if l["letter"] == i["letter"]:
-                        if l["negation"] != i["negation"]:
-                            del l_pure[k]
-                        change = 0
-            if change == 1:
-                l_pure.append(i)
-            change = 1
-    #fonction heuristic MOMS
-    new = []
-    minimum = len(variable[0])
-    for s in variable:
-        if len(s) <= minimum:
-            if len(s) == minimum:
-                new.append(s)
-            else:
-                new = []
-                new.append(s)
-    print(new)
-    letter = []
-    for s in new:
-        for k in s:
-            letter.append(k["letter"])
-    print(letter)
-    minimum = 0
-    new = []
-    for l in letter:
-        if letter.count(l) >= minimum:
-            if letter.count(l) == minimum and l not in new:
-                new.append(l)
-            else:
-                minimum = letter.count(l)
-                new = []
-                new.append(l)
-    print(new)
-    l = []
-    if len(new) > 1:
-        for s in variable:
-            for m in s:
-                l.append(m["letter"])
-    print(l)
-    
+    dpll(variable)
     #print(clause)
     
 
@@ -321,6 +365,7 @@ if __name__ == '__main__':
     print(print_truth_table("AB|C&D|"))
     print("\n")
     print(print_truth_table("AA!&"))
+    #print(print_truth_table("AA!&B|B!&"))
     #ex05
     '''print(negation_normal_form("ABC&&!D!&!E|"))
     print(negation_normal_form("AB|C&!"))
@@ -341,5 +386,6 @@ if __name__ == '__main__':
     #print(sat("A!B|C&"))
     #print(sat("AB&!C!|"))
     #print(sat("AB|C&"))
-    print(sat("A!B&BB|&"))
+    print(sat("AA!&B|B!&"))
+
     #print(sat("AB|D|"))
