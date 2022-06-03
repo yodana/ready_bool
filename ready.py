@@ -79,14 +79,16 @@ def sat(formula):
     new = []
     for l in letter:
         if letter.count(l) >= minimum:
-            if letter.count(l) == minimum or l in new != True:
-                print(l in new)
+            if letter.count(l) == minimum and l not in new:
                 new.append(l)
             else:
                 minimum = letter.count(l)
                 new = []
                 new.append(l)
     print(new)
+    if len(new) > 1:
+        for s in variable:
+            print(s)
     #print(clause)
     
 
@@ -338,5 +340,5 @@ if __name__ == '__main__':
     #print(sat("A!B|C&"))
     #print(sat("AB&!C!|"))
     #print(sat("AB|C&"))
-    print(sat("A!A&B!&"))
+    print(sat("A!B&BB|&"))
     #print(sat("AB|D|"))
