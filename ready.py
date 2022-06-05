@@ -1,6 +1,5 @@
 def litteral_pur(variable):
     l_pure = []
-    print("variable =>", variable)
     change = 0
     for s in variable:
         for i in s:
@@ -28,21 +27,28 @@ def clause_unitaire(variable):
             if len(s) == 1:
                 cu = s
     change = 0
+    i = 0
+    k = 0
     if cu != "":
-        for i, s in enumerate(variable):
-            for k, l in enumerate(s):
-                if l["letter"] == cu[0]["letter"]:
+        while(i < len(variable)):
+            while(k < len(variable[i])):
+                if variable[i][k]["letter"] == cu[0]["letter"]:
                     change = 1
-                    if l["negation"] == cu[0]["negation"]:
+                    if variable[i][k]["negation"] == cu[0]["negation"]:
                         del(variable[i])
+                        if variable == []:
+                            break ;
+                        i = 0
                     else:
                         del(variable[i][k])
-    print("variable cu =>", variable)
+                        k = 0
+                k +=1
+            i +=1
+            k = 0
     return variable, change
 
 def dpll(variable):
      #fonction clause unitaire
-    print("je passe avec =>", variable)
     change = 1
     while (change == 1):
         variable, change = clause_unitaire(variable)
@@ -55,7 +61,6 @@ def dpll(variable):
     for s in variable:
         if s == []:
             return False
-    print(variable)
     #fonction heuristic MOMS
     new = []
     minimum = len(variable[0])
@@ -67,13 +72,11 @@ def dpll(variable):
             else:
                 new = []
                 new.append(s)
-    print("claues les + petites", new)
     letter = []
     #prendre la lettre la plus presentes dans les clauses
     for s in new:
         for k in s:
             letter.append(k["letter"])
-    print(letter)
     minimum = 0
     new = []
     for l in letter:
@@ -84,14 +87,12 @@ def dpll(variable):
                 minimum = letter.count(l)
                 new = []
                 new.append(l)
-    print(new)
     l = []
     #si deux variables sont a egalite choisir la vairable la + presente dans toute la formule
     if len(new) > 1:
         for s in variable:
             for m in s:
                 l.append(m["letter"])
-        print(l)
         minimum = 0
         new = []
         for s in l:
@@ -102,7 +103,6 @@ def dpll(variable):
                     minimum = letter.count(s)
                     new = []
                     new.append(s)
-    print(new)
     v1 = []
     v2 = []
     for s in variable:
@@ -114,7 +114,6 @@ def dpll(variable):
 
 def sat(formula):
     f = conjunctive_normal_form(formula)
-    print("conjunctive normal form =>", f)
     clauses = []
     variable = []
     #fonction pour faire l'ensemble de clauses
@@ -125,15 +124,12 @@ def sat(formula):
                 variable[-1][0]["negation"] += 1
             if s == "&" or s == "|":
                 if s == "&":
-                    print(variable[-2])
                     clauses.append(variable[-2])
                 if s == "|":
                     for v in variable[-1]:
                         variable[-2].append(v)
                     variable.pop()
-            print(variable)
     return dpll(variable)
-    #print(clause)
     
 
 def distributivity(bloc, variable):
@@ -151,7 +147,6 @@ def distributivity(bloc, variable):
 
 def conjunctive_normal_form(formula):
     f = negation_normal_form(formula)
-    print(f)
     pile = []
     change = 1
     while change == 1:
@@ -358,10 +353,11 @@ if __name__ == '__main__':
     print()
     print(print_truth_table("AB!&A!B&|"))
     print(print_truth_table("AB^"))'''
+    
     '''print(print_truth_table("AB|C&D|"))
     print("\n")
     print(print_truth_table("AB|D|CD|&"))'''
-    print(print_truth_table("AB|C&D|"))
+    '''print(print_truth_table("AB|C&D|"))
     print("\n")
     print(print_truth_table("AA!&"))
     print(print_truth_table("A!B|C&"))
@@ -371,6 +367,8 @@ if __name__ == '__main__':
     print(print_truth_table("AB|D|") + "\n")
     print(print_truth_table("A!A|AA|&A!A!|AA!|&&"))
     print(print_truth_table("AA^"))
+    print(print_truth_table("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))'''
+    print(print_truth_table("PQ!|PQ|R!|&QR|&R&"))
     #ex05
     '''print(negation_normal_form("ABC&&!D!&!E|"))
     print(negation_normal_form("AB|C&!"))
@@ -388,12 +386,15 @@ if __name__ == '__main__':
     print(conjunctive_normal_form("AB&!C!|"))
     print(conjunctive_normal_form("AB|!C!&"))'''
     #ex07
-    #print(sat("A!B|C&"))
-    #print(sat("AB&!C!|"))
-    #print(sat("AB|C&"))
-    #print(sat("AA!&B|B!&"))
-    #print(sat("AB|D|"))
-    #print(sat("AB|"))
-    #print(sat("AB&"))
-    #print(sat("AA!&"))
-    print(sat("AA^"))
+    print(sat("A!B|C&")) #True
+    print(sat("AB&!C!|")) #true
+    print(sat("AB|C&")) #true
+    print(sat("AA!&B|B!&")) #False
+    print(sat("AB|D|")) #true
+    print(sat("AB|"))#true
+    print(sat("AB&"))#true 
+    print(sat("AA!&")) #False
+    print(sat("AA^")) #False
+    print(sat("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!&AB!|&")) #True
+    print(sat("PQ!|PQ|R!|&QR|&R&")) # true
+    print(sat("AB!|C|D!|F!|H!|BC|&BC|D|E|H|&BD!|E|F!|&BC!|G|H!|&BD!|F|G!|&B!C!|&B!C!|D!|&B!C|D|&B!D!|E|&B!E!|F|&G!H!|&GH|&GH|&")) #true
