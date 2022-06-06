@@ -1,3 +1,50 @@
+def eval_set(formula, sets):
+    ops = { "&": (lambda x,y: x&y),
+            "!": (lambda x: not x),
+            "|": (lambda x,y: x|y),
+            "^": (lambda x,y: x^y),
+            ">": (lambda x,y: ((not x) | y)), 
+            "=": (lambda x,y: x==y)
+        }
+    variables = []
+    i = 0
+    for s in formula:
+        if s >= "A" and s <= "Z":
+            variables.append({"letter":s,"set":set(sets[i])})
+            i += 1
+    pile = []
+    for s in formula:
+        if s >= "A" and s <= "Z":
+            pile.append(next(x["set"] for x in variables if x["letter"] == s)) #chercher dans la liste la variable correspondant au set 
+        else:
+            try:
+                if s == "!":
+                    s = set({})
+                    pile.pop()
+                else:
+                    s = ops[s](pile[-2], pile.pop())
+                    pile.pop()
+                pile.append(s)
+            except:
+                exit("Error Formula")
+    if len(pile) == 1:
+        return list(pile[0])
+    else:
+        exit("Error Formula")
+
+def powerset(set):
+    powerset = []
+    i = 0
+    k = 0
+    counter = 2**len(set)
+    for c in range(0, counter):
+        subset = []
+        for j in range(0, len(set)):
+            if (c & 1 << j) > 0:
+                subset.append(set[j])
+        powerset.append(subset)
+    return powerset
+
 def litteral_pur(variable):
     l_pure = []
     change = 0
@@ -386,7 +433,7 @@ if __name__ == '__main__':
     print(conjunctive_normal_form("AB&!C!|"))
     print(conjunctive_normal_form("AB|!C!&"))'''
     #ex07
-    print(sat("A!B|C&")) #True
+    '''print(sat("A!B|C&")) #True
     print(sat("AB&!C!|")) #true
     print(sat("AB|C&")) #true
     print(sat("AA!&B|B!&")) #False
@@ -397,4 +444,17 @@ if __name__ == '__main__':
     print(sat("AA^")) #False
     print(sat("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!&AB!|&")) #True
     print(sat("PQ!|PQ|R!|&QR|&R&")) # true
-    print(sat("AB!|C|D!|F!|H!|BC|&BC|D|E|H|&BD!|E|F!|&BC!|G|H!|&BD!|F|G!|&B!C!|&B!C!|D!|&B!C|D|&B!D!|E|&B!E!|F|&G!H!|&GH|&GH|&")) #true
+    print(sat("AB!|C|D!|F!|H!|BC|&BC|D|E|H|&BD!|E|F!|&BC!|G|H!|&BD!|F|G!|&B!C!|&B!C!|D!|&B!C|D|&B!D!|E|&B!E!|F|&G!H!|&GH|&GH|&")) #true'''
+    #ex08
+    #print(powerset([1,2,3]))
+    #print(powerset([1,2]))
+    #ex09
+    '''sets = [{1,2,3}, {0,4,5}, {0,1}]
+    print(eval_set("AB&C&",sets))
+    print(eval_set("AB|C&",sets))
+    sets = [{}, {0,4,5}]
+    print(eval_set("AB|",sets))
+    sets = [{1, 2}, {0,4,5}]
+    print(eval_set("A!B|", sets))'''
+    #ex10
+    
