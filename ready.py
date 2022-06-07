@@ -1,3 +1,26 @@
+def reverse_map(n):
+    n = int(n * ((2**32)-1))
+    k = 0
+    x = 0
+    y = 0
+    for i in range(0, 16):
+        x_mask = n & (1 << k)
+        y_mask = n & (1 << (k + 1))
+        x = x | (x_mask >> i)
+        y = y | (y_mask >> (i + 1))
+        k = k + 2
+    return x, y
+
+def map(x, y):
+    #use the z curve (interleave the bits)
+    z = 0
+    for i in range(0, 16):
+        x_mask = x & (1 << i) # mettre dans z => x bit par bit (sert a avoir le premier bit a droite puis le second etc)
+        y_mask = y & (1 << i)
+        z = z | (x_mask << i) #place le bit a sa place (on multiplie le bits par i pour qu il soit bien a sa place)
+        z = z | (y_mask << (i + 1))
+    return (z / ((2**32)-1))
+
 def eval_set(formula, sets):
     ops = { "&": (lambda x,y: x&y),
             "!": (lambda x: not x),
@@ -457,4 +480,13 @@ if __name__ == '__main__':
     sets = [{1, 2}, {0,4,5}]
     print(eval_set("A!B|", sets))'''
     #ex10
-    
+    print(map((2**16)-2,(2**16)-2))
+    print(map((2**16)-1,(2**16)-1))
+    print(map(3,3))
+    print(map(2**10,2**10))
+    print(map(0, 0))
+    print(map(2, 0))
+    #ex11
+    print(reverse_map(0.9999999993015081))
+    print(reverse_map(0))
+    print(reverse_map(0.0007324218751705303))
