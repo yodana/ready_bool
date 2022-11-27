@@ -35,6 +35,7 @@ def eval_set(formula, sets):
         if s >= "A" and s <= "Z":
             variables.append({"letter":s,"set":set(sets[i])})
             i += 1
+    formula = conjunctive_normal_form(formula)
     pile = []
     for s in formula:
         if s >= "A" and s <= "Z":
@@ -57,13 +58,15 @@ def eval_set(formula, sets):
 
 def powerset(set):
     powerset = []
-    i = 0
-    k = 0
+    dup = {x for x in set if set.count(x) > 1}
+    if (len(dup) > 0):
+        print("Error: duplicate elements")
+        exit(0)
     counter = 2**len(set)
     for c in range(0, counter):
         subset = []
         for j in range(0, len(set)):
-            if (c & 1 << j) > 0:
+            if (c & (1 << j)) > 0:
                 subset.append(set[j])
         powerset.append(subset)
     return powerset
@@ -383,6 +386,8 @@ def adder(a, b):
 def multiplier(a, b):
     if a < 0 or b < 0:
         return "Only natural numbers"
+    if a == 0 or b == 0:
+        return 0
     stop = 1
     number = a
     while stop < b:
@@ -391,26 +396,28 @@ def multiplier(a, b):
     return a
 
 if __name__ == '__main__':
-    '''a = 30
+    ''' a = 30
     b = 14
     #ex00
     ret = adder(a, b)
     print(ret)
-    a = 3
-    b = 30
+    a = 30
+    b = 0
     #ex01
     ret = multiplier(a, b)
     print(ret)
     #ex02
+    
     for i in range(0, 10):
         ret = gray_code(i)
-        print(ret)'''
+        print(ret)
     #ex03
-    '''print(eval_formula("11>"))
+    print(eval_formula("11>"))
     #print(eval_formula("!"))
     print(eval_formula("1011||="))
     print(eval_formula("10="))
-    #ex04
+    '''
+    '''#ex04
     #print(print_truth_table("AB="))
     #print(print_truth_table("A!B|AB!|&"))
     #print(print_truth_table("ABCD&!&!&!"))
@@ -420,14 +427,13 @@ if __name__ == '__main__':
     #print(print_truth_table("ABC&&D|E|"))
     print(print_truth_table("AB="))
     print(print_truth_table("A!B|AB!|&"))
-    print()
     print(print_truth_table("AB!&A!B&|"))
-    print(print_truth_table("AB^"))'''
+    print(print_truth_table("AB^"))
     
-    '''print(print_truth_table("AB|C&D|"))
+    print(print_truth_table("AB|C&D|"))
     print("\n")
-    print(print_truth_table("AB|D|CD|&"))'''
-    '''print(print_truth_table("AB|C&D|"))
+    print(print_truth_table("AB|D|CD|&"))
+    print(print_truth_table("AB|C&D|"))
     print("\n")
     print(print_truth_table("AA!&"))
     print(print_truth_table("A!B|C&"))
@@ -437,16 +443,16 @@ if __name__ == '__main__':
     print(print_truth_table("AB|D|") + "\n")
     print(print_truth_table("A!A|AA|&A!A!|AA!|&&"))
     print(print_truth_table("AA^"))
-    print(print_truth_table("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))'''
+    print(print_truth_table("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
     print(print_truth_table("PQ!|PQ|R!|&QR|&R&"))
+    '''
     #ex05
     '''print(negation_normal_form("ABC&&!D!&!E|"))
     print(negation_normal_form("AB|C&!"))
     print(negation_normal_form("AB="))
-    print(negation_normal_form("AB^"))
+    print(negation_normal_form("AB^"))'''
     #ex06
-    '''
-    ''''print(conjunctive_normal_form("AB&C|"))
+    '''print(conjunctive_normal_form("AB&C|"))
     print(conjunctive_normal_form("ABCD&|&"))
     print(conjunctive_normal_form("AB&!"))
     print(conjunctive_normal_form("AB|!"))
@@ -469,18 +475,18 @@ if __name__ == '__main__':
     print(sat("PQ!|PQ|R!|&QR|&R&")) # true
     print(sat("AB!|C|D!|F!|H!|BC|&BC|D|E|H|&BD!|E|F!|&BC!|G|H!|&BD!|F|G!|&B!C!|&B!C!|D!|&B!C|D|&B!D!|E|&B!E!|F|&G!H!|&GH|&GH|&")) #true'''
     #ex08
-    #print(powerset([1,2,3]))
-    #print(powerset([1,2]))
+    '''print(powerset([1,2,3, 0]))
+    print(powerset([1,2]))'''
     #ex09
     '''sets = [{1,2,3}, {0,4,5}, {0,1}]
     print(eval_set("AB&C&",sets))
     print(eval_set("AB|C&",sets))
-    sets = [{}, {0,4,5}]
-    print(eval_set("AB|",sets))
+    sets = [{0,4,5}, {0,4,5}]
+    print(eval_set("AB=",sets))
     sets = [{1, 2}, {0,4,5}]
     print(eval_set("A!B|", sets))'''
     #ex10
-    print(map((2**16)-2,(2**16)-2))
+    '''print(map((2**16)-2,(2**16)-2))
     print(map((2**16)-1,(2**16)-1))
     print(map(3,3))
     print(map(2**10,2**10))
@@ -489,4 +495,4 @@ if __name__ == '__main__':
     #ex11
     print(reverse_map(0.9999999993015081))
     print(reverse_map(0))
-    print(reverse_map(0.0007324218751705303))
+    print(reverse_map(0.0007324218751705303))'''
