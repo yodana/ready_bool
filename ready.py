@@ -121,15 +121,15 @@ def clause_unitaire(variable):
     return variable, change
 
 def dpll(variable):
-     #fonction clause unitaire
-    change = 1
-    while (change == 1):
-        variable, change = clause_unitaire(variable)
-    #fonction litteral pur
     change = 1
     while (change == 1):
         variable, change = litteral_pur(variable)
+    #fonction clause unitaire
+    change = 1
+    while (change == 1):
+        variable, change = clause_unitaire(variable)
     if variable == []:
+        print("YES I RETURN TRUE")
         return True
     for s in variable:
         if s == []:
@@ -183,6 +183,12 @@ def dpll(variable):
         v2.append(s)
     v1.append([{"letter":new[0], "negation":0}])
     v2.append([{"letter":new[0], "negation":1}])
+    print(v1)
+    v1, c = clause_unitaire(v1)
+    v2, c = clause_unitaire(v2)
+    print(v1)
+    #print(v2)
+    #faire une version ou on essaye avec 1 donc sup les clauses avec le litteral et une version 0 donc sup le litteral inverse dans les clauses
     return dpll(v1) or dpll(v2)
 
 def sat(formula):
@@ -352,6 +358,7 @@ def eval_formula(formula):
             "=": (lambda x,y: x==y)
         }
     pile = []
+    i = 0
     for s in formula:
         if s == "1" or s == "0":
             pile.append(ord(s) - ord('0'))
@@ -360,6 +367,7 @@ def eval_formula(formula):
                 if s == "!":
                     s = ops[s](pile.pop())
                 else:
+                    i = i + 1
                     s = ops[s](pile[-2], pile.pop())
                     pile.pop()
                 pile.append(s)
@@ -471,9 +479,14 @@ if __name__ == '__main__':
     print(sat("AB&"))#true 
     print(sat("AA!&")) #False
     print(sat("AA^")) #False
-    print(sat("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!&AB!|&")) #True
-    print(sat("PQ!|PQ|R!|&QR|&R&")) # true
-    print(sat("AB!|C|D!|F!|H!|BC|&BC|D|E|H|&BD!|E|F!|&BC!|G|H!|&BD!|F|G!|&B!C!|&B!C!|D!|&B!C|D|&B!D!|E|&B!E!|F|&G!H!|&GH|&GH|&")) #true'''
+    print(print_truth_table("AA^"))'''
+    #print(sat("AD|E!|A!E!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
+    print(sat("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
+
+    #print(sat("AA^")) #True
+    #print(print_truth_table("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
+    #print(sat("PQ!|PQ|R!|&QR|&R&")) # true
+    #print(sat("AB!|C|D!|F!|H!|BC|&BC|D|E|H|&BD!|E|F!|&BC!|G|H!|&BD!|F|G!|&B!C!|&B!C!|D!|&B!C|D|&B!D!|E|&B!E!|F|&G!H!|&GH|&GH|&")) #true
     #ex08
     '''print(powerset([1,2,3, 0]))
     print(powerset([1,2]))'''
