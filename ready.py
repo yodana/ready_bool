@@ -71,144 +71,31 @@ def powerset(set):
         powerset.append(subset)
     return powerset
 
-def litteral_pur(variable):
-    l_pure = []
-    change = 0
-    for s in variable:
-        for i in s:
-            if l_pure != []:
-                for k, l in enumerate(l_pure):
-                    if l["letter"] == i["letter"]:
-                        if l["negation"] != i["negation"]:
-                            del l_pure[k]
-                        change = 1
-            if change == 0:
-                l_pure.append(i)
-    if len(l_pure) == 0:
-        change = 0
-    for i, s in enumerate(variable):
-        for v in s:
-            if v in l_pure:
-                if i >= 0:
-                    del variable[i]
-                i -= 1
-    return variable, change
-
-def clause_unitaire(variable):
-    cu = ""
-    for s in variable:
-            if len(s) == 1:
-                cu = s
-    change = 0
-    i = 0
-    k = 0
-    if cu != "":
-        while(i < len(variable)):
-            while(k < len(variable[i])):
-                if variable[i][k]["letter"] == cu[0]["letter"]:
-                    change = 1
-                    if variable[i][k]["negation"] == cu[0]["negation"]:
-                        del(variable[i])
-                        if variable == []:
-                            break ;
-                        i = 0
-                    else:
-                        del(variable[i][k])
-                        k = 0
-                k +=1
-            i +=1
-            k = 0
-    return variable, change
-
-def dpll(variable):
-    change = 1
-    while (change == 1):
-        variable, change = litteral_pur(variable)
-    #fonction clause unitaire
-    change = 1
-    while (change == 1):
-        variable, change = clause_unitaire(variable)
-    if variable == []:
-        print("YES I RETURN TRUE")
-        return True
-    for s in variable:
-        if s == []:
-            return False
-    #fonction heuristic MOMS
-    new = []
-    minimum = len(variable[0])
-    #prendre les clauses les + petites
-    for s in variable:
-        if len(s) <= minimum:
-            if len(s) == minimum:
-                new.append(s)
-            else:
-                new = []
-                new.append(s)
-    letter = []
-    #prendre la lettre la plus presentes dans les clauses
-    for s in new:
-        for k in s:
-            letter.append(k["letter"])
-    minimum = 0
-    new = []
-    for l in letter:
-        if letter.count(l) >= minimum:
-            if letter.count(l) == minimum and l not in new:
-                new.append(l)
-            else:
-                minimum = letter.count(l)
-                new = []
-                new.append(l)
-    l = []
-    #si deux variables sont a egalite choisir la vairable la + presente dans toute la formule
-    if len(new) > 1:
-        for s in variable:
-            for m in s:
-                l.append(m["letter"])
-        minimum = 0
-        new = []
-        for s in l:
-            if l.count(s) >= minimum:
-                if l.count(s) == minimum and l not in new:
-                    new.append(s)
-                else:
-                    minimum = letter.count(s)
-                    new = []
-                    new.append(s)
-    v1 = []
-    v2 = []
-    for s in variable:
-        v1.append(s)
-        v2.append(s)
-    v1.append([{"letter":new[0], "negation":0}])
-    v2.append([{"letter":new[0], "negation":1}])
-    print(v1)
-    v1, c = clause_unitaire(v1)
-    v2, c = clause_unitaire(v2)
-    print(v1)
-    #print(v2)
-    #faire une version ou on essaye avec 1 donc sup les clauses avec le litteral et une version 0 donc sup le litteral inverse dans les clauses
-    return dpll(v1) or dpll(v2)
 
 def sat(formula):
-    f = conjunctive_normal_form(formula)
-    clauses = []
-    variable = []
-    #fonction pour faire l'ensemble de clauses
-    for i, s in enumerate(f):
+    letter = []
+    l = {}
+    form = ""
+    letters = []
+    for s in formula:
+        if s >= "A" and s <= "Z":
+            if s not in letter:
+                letter.append(s)
+    for i in range(0, pow(len(letter))):
+        t = format(i, 'b').zfill(len(letter))
+        l = create_list(t, letter)
+        for s in formula:
             if s >= "A" and s <= "Z":
-                variable.append([{"letter": s, "negation": 0}])
-            if s == "!":
-                variable[-1][0]["negation"] += 1
-            if s == "&" or s == "|":
-                if s == "&":
-                    clauses.append(variable[-2])
-                if s == "|":
-                    for v in variable[-1]:
-                        variable[-2].append(v)
-                    variable.pop()
-    return dpll(variable)
+                form += l[s]
+                if s not in letters:
+                    letters.append(s)
+            else:
+                form += s
+        if eval_formula(form) == True:
+            return True
+        letters = []
+        form = ""
+    return False
     
 
 def distributivity(bloc, variable):
@@ -482,7 +369,7 @@ if __name__ == '__main__':
     print(print_truth_table("AA^"))'''
     #print(sat("AD|E!|A!E!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
     print(sat("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
-
+    #print(print_truth_table("AD|E!|A!E!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
     #print(sat("AA^")) #True
     #print(print_truth_table("AD|E!|AE!|&BC!|E|&BD!|&BD|E|&A!B!|&A!B|C!|&B!D|E!|&AB!|&"))
     #print(sat("PQ!|PQ|R!|&QR|&R&")) # true
